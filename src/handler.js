@@ -35,6 +35,7 @@ const addBook = (request, h) => {
     books.push(newBook);
     const isSuccess = books.filter((book) => book.id === id).length > 0;
 
+
     if (isSuccess) {
     const response = h.response({
         status: 'success',
@@ -56,37 +57,35 @@ const addBook = (request, h) => {
 };
 
 const getAllBooks = () => {
-    const BooksList = books.map(book => {
-        return{
-            id: book.id,
-            name: book.name,
-            publisher: book.publisher
-        }
-    });
+    const booksList = books.map((book) => ({
+        id: book.id,
+        name: book.name,
+        publisher: book.publisher,
+      }));
 
     return {
         status: 'success',
         data: {
-           books: BooksList
+           books: booksList
         }
     }
 };
 
-const DetailBooks = (request, h) =>{
-
-    const {bookId} = request.params
-    const book = books.filter((b) => b.id === bookId);
+const DetailBooks = (request, h) => {
+    const {id} = request.params
+    const book = books.find((book) => book.id === id);
+    console.log(book);
 
     if(book !== undefined){
-        return h.response(
-            {
-            status: 'success',
-            data: { 
-                book : {
+            const response = h.response({
+                status: 'success',
+                data: { 
+                    book,
                 },
-            },
-          }).code(200);
-    }
+                })
+                response.code(200);
+                return response ;
+    } 
 
     const response = h.response({
         status: 'fail',
@@ -94,7 +93,8 @@ const DetailBooks = (request, h) =>{
         })
         response.code(404);
         return response ;
- 
+
+
 }    
 
 
@@ -105,6 +105,7 @@ const UpdateBooks = (request, h) => {
     
     const updatedAt = new Date().toISOString();
     const index = books.findIndex((book) => book.id === id);
+    console.log(index);
 
     if(index !== undefined){
         if(!name){
